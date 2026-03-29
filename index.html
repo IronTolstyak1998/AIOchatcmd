@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Команды AIO-chat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Onest:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --surface2: #1a1e28;
+    --border: rgba(255,255,255,0.07);
+    --accent: #5d7cf5;
+    --accent2: #a78bfa;
+    --accent3: #38bdf8;
+    --success: #34d399;
+    --warn: #fbbf24;
+    --danger: #f87171;
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Onest', sans-serif;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* Subtle grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(93,124,245,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(93,124,245,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Layout ── */
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 32px 20px;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 8px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-weight: 900;
+    font-size: 16px;
+    letter-spacing: -0.3px;
+  }
+
+  .logo-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .nav-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 16px 8px 6px;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: var(--radius-sm);
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 13.5px;
+    transition: all 0.15s;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .nav-link:hover {
+    background: var(--surface2);
+    color: var(--text);
+  }
+
+  .nav-link .nav-icon { font-size: 15px; flex-shrink: 0; }
+
+  /* ── Main content ── */
+  .main {
+    padding: 48px 60px 100px;
+    max-width: 900px;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    margin-bottom: 64px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(93,124,245,0.12);
+    border: 1px solid rgba(93,124,245,0.25);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--accent);
+    font-family: var(--mono);
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #fff 30%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    color: var(--text-dim);
+    max-width: 580px;
+    margin-bottom: 28px;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  /* ── Notation box ── */
+  .notation-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 40px;
+  }
+
+  .notation-box h3 {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+    font-family: var(--mono);
+  }
+
+  .notation-box ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .notation-box li {
+    display: flex;
+    gap: 10px;
+    font-size: 13.5px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .notation-box li::before {
+    content: '→';
+    color: var(--accent);
+    flex-shrink: 0;
+    font-family: var(--mono);
+  }
+
+  /* ── Sections ── */
+  .section {
+    margin-bottom: 60px;
+    scroll-margin-top: 32px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .section-icon.blue  { background: rgba(93,124,245,0.15); }
+  .section-icon.purple{ background: rgba(167,139,250,0.15); }
+  .section-icon.cyan  { background: rgba(56,189,248,0.15); }
+  .section-icon.green { background: rgba(52,211,153,0.15); }
+  .section-icon.yellow{ background: rgba(251,191,36,0.15); }
+  .section-icon.red   { background: rgba(248,113,113,0.15); }
+  .section-icon.pink  { background: rgba(244,114,182,0.15); }
+  .section-icon.orange{ background: rgba(251,146,60,0.15); }
+
+  .section-title {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+  }
+
+  .section-desc {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 20px;
+    max-width: 680px;
+  }
+
+  /* ── Subsection ── */
+  .subsection {
+    margin-bottom: 28px;
+  }
+
+  .subsection-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-family: var(--mono);
+  }
+
+  /* ── Command cards ── */
+  .cmd-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cmd {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px 16px;
+    align-items: start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    transition: border-color 0.15s;
+  }
+
+  .cmd:hover {
+    border-color: rgba(93,124,245,0.3);
+  }
+
+  .cmd-name {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    white-space: nowrap;
+    padding-top: 1px;
+  }
+
+  .cmd-name.green  { color: var(--success); }
+  .cmd-name.yellow { color: var(--warn); }
+  .cmd-name.red    { color: var(--danger); }
+  .cmd-name.purple { color: var(--accent2); }
+  .cmd-name.cyan   { color: var(--accent3); }
+
+  .cmd-desc {
+    font-size: 13.5px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .cmd-desc strong { color: var(--text); font-weight: 600; }
+
+  .cmd-aliases {
+    grid-column: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 4px;
+  }
+
+  .alias {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+  }
+
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 4px;
+    padding: 1px 7px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
+  .rank-1 { background: rgba(52,211,153,0.12); color: var(--success); border: 1px solid rgba(52,211,153,0.2); }
+  .rank-2 { background: rgba(93,124,245,0.12); color: var(--accent); border: 1px solid rgba(93,124,245,0.2); }
+  .rank-3 { background: rgba(167,139,250,0.12); color: var(--accent2); border: 1px solid rgba(167,139,250,0.2); }
+  .rank-4 { background: rgba(251,191,36,0.12); color: var(--warn); border: 1px solid rgba(251,191,36,0.2); }
+
+  /* ── Callout ── */
+  .callout {
+    display: flex;
+    gap: 12px;
+    background: rgba(93,124,245,0.06);
+    border: 1px solid rgba(93,124,245,0.2);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    font-size: 13.5px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .callout-icon { flex-shrink: 0; font-size: 16px; }
+
+  .callout.warn {
+    background: rgba(251,191,36,0.06);
+    border-color: rgba(251,191,36,0.2);
+  }
+
+  .callout.success {
+    background: rgba(52,211,153,0.06);
+    border-color: rgba(52,211,153,0.2);
+  }
+
+  /* ── Table of contents ── */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 48px;
+  }
+
+  .toc h3 {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    font-family: var(--mono);
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 24px;
+  }
+
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 13.5px;
+    padding: 4px 0;
+    transition: color 0.15s;
+  }
+
+  .toc-item:hover { color: var(--accent); }
+
+  .toc-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    min-width: 22px;
+  }
+
+  /* ── Rank table ── */
+  .rank-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 13.5px;
+  }
+
+  .rank-table th {
+    text-align: left;
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+  }
+
+  .rank-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+    vertical-align: top;
+  }
+
+  .rank-table tr:last-child td { border-bottom: none; }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { padding: 32px 24px 80px; }
+    .hero h1 { font-size: 36px; }
+    .toc-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── Code inline ── */
+  code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: var(--accent3);
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section { animation: fadeSlide 0.35s ease both; }
+
+  /* ── Author chip ── */
+  .author-chip {
+    text-decoration: none;
+    background: rgba(167,139,250,0.1) !important;
+    border-color: rgba(167,139,250,0.25) !important;
+    color: var(--accent2) !important;
+    transition: background 0.15s;
+  }
+  .author-chip:hover {
+    background: rgba(167,139,250,0.18) !important;
+  }
+
+  /* ── Active nav link ── */
+  .nav-link.active {
+    background: rgba(93,124,245,0.12);
+    color: var(--accent);
+    border-left: 2px solid var(--accent);
+    padding-left: 8px;
+  }
+
+  /* ── Scrollbar for main ── */
+  main::-webkit-scrollbar { width: 4px; }
+  main::-webkit-scrollbar-track { background: transparent; }
+  main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* ── Divider ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 40px 0;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+    const allSections = Array.from(document.querySelectorAll('[id]'));
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(l => l.classList.remove('active'));
+          const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+          if (active) {
+            active.classList.add('active');
+            active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+          }
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '-80px 0px -55% 0px' });
+
+    allSections.forEach(s => observer.observe(s));
+
+    // Stagger section fade-in animations
+    document.querySelectorAll('.section').forEach((el, i) => {
+      el.style.animationDelay = `${i * 0.035}s`;
+    });
+  });
+</script>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ══ SIDEBAR ══ -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div class="logo-text">AIO-chat</div>
+        <div class="logo-sub">All In One</div>
+      </div>
+    </div>
+    <a href="https://t.me/Iron_Tolstyak_1998" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.15);text-decoration:none;margin-bottom:8px;">
+      <span style="font-size:14px;">👤</span>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--accent2);">Iron Tolstyak 1998</div>
+        <div style="font-size:10px;color:var(--text-muted);font-family:var(--mono);">@Iron_Tolstyak_1998</div>
+      </div>
+    </a>
+
+    <div class="nav-section-label">Навигация</div>
+    <a class="nav-link" href="#notation"><span class="nav-icon">📖</span> Обозначения</a>
+    <a class="nav-link" href="#ranks"><span class="nav-icon">🏷</span> Система рангов</a>
+
+    <div class="nav-section-label">Модерация</div>
+    <a class="nav-link" href="#mod-base"><span class="nav-icon">🛡</span> Основные команды</a>
+    <a class="nav-link" href="#mod-warns"><span class="nav-icon">⚠️</span> Варны и блокировки</a>
+    <a class="nav-link" href="#mod-antispam"><span class="nav-icon">🤖</span> Антиспам</a>
+    <a class="nav-link" href="#mod-filter"><span class="nav-icon">🚫</span> Фильтр слов</a>
+    <a class="nav-link" href="#mod-links"><span class="nav-icon">🔗</span> Фильтр ссылок</a>
+    <a class="nav-link" href="#mod-chat"><span class="nav-icon">🔒</span> Управление чатом</a>
+
+    <div class="nav-section-label">Управление</div>
+    <a class="nav-link" href="#mgmt-welcome"><span class="nav-icon">👋</span> Приветствие</a>
+    <a class="nav-link" href="#mgmt-rules"><span class="nav-icon">📜</span> Правила и подписка</a>
+
+    <div class="nav-section-label">Профиль</div>
+    <a class="nav-link" href="#profile-nick"><span class="nav-icon">✏️</span> Ники и описание</a>
+    <a class="nav-link" href="#profile-stats"><span class="nav-icon">📊</span> Статистика</a>
+    <a class="nav-link" href="#profile-rep"><span class="nav-icon">⭐</span> Репутация</a>
+
+    <div class="nav-section-label">Модули</div>
+    <a class="nav-link" href="#module-marriage"><span class="nav-icon">💍</span> Браки</a>
+    <a class="nav-link" href="#module-rp"><span class="nav-icon">🎭</span> РП-команды</a>
+
+    <div class="nav-section-label">Мини-игры</div>
+    <a class="nav-link" href="#games-solo"><span class="nav-icon">🎲</span> Одиночные</a>
+    <a class="nav-link" href="#games-pvp"><span class="nav-icon">⚔️</span> PvP</a>
+    <a class="nav-link" href="#games-multi"><span class="nav-icon">👥</span> Групповые</a>
+    <a class="nav-link" href="#games-mafia"><span class="nav-icon">🕵️</span> Мафия</a>
+
+    <div class="nav-section-label">Утилиты</div>
+    <a class="nav-link" href="#utils"><span class="nav-icon">🛠</span> Полезные команды</a>
+    <a class="nav-link" href="#lang"><span class="nav-icon">🌐</span> Язык интерфейса</a>
+  </nav>
+
+  <!-- ══ MAIN ══ -->
+  <main class="main">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-badge">⚡ v3.0 · All In One Chat Manager</div>
+      <h1>Команды<br>AIO-chat</h1>
+      <p class="hero-sub">Полный справочник по командам, модулям и мини-играм универсального чат-менеджера. Всё в одном месте.</p>
+      <div class="meta-row">
+        <span class="meta-chip">⌨️ Префиксы: <code>!</code> <code>.</code> <code>/</code></span>
+        <span class="meta-chip">🎯 Цель: @username или ответом</span>
+        <span class="meta-chip">🤖 Движок: aiogram 3.x</span>
+        <span class="meta-chip" style="background:rgba(56,189,248,0.1);border-color:rgba(56,189,248,0.25);color:var(--accent3);">🌐 RU · EN</span>
+        <a class="meta-chip author-chip" href="https://t.me/Iron_Tolstyak_1998" target="_blank">👤 Автор: Iron Tolstyak 1998</a>
+      </div>
+    </div>
+
+    <!-- TOC -->
+    <div class="toc">
+      <h3>Оглавление</h3>
+      <div class="toc-grid">
+        <a class="toc-item" href="#ranks"><span class="toc-num">01</span> Система рангов</a>
+        <a class="toc-item" href="#mod-base"><span class="toc-num">02</span> Команды модерации</a>
+        <a class="toc-item" href="#mod-warns"><span class="toc-num">03</span> Варны и блокировки</a>
+        <a class="toc-item" href="#mod-antispam"><span class="toc-num">04</span> Антиспам</a>
+        <a class="toc-item" href="#mod-filter"><span class="toc-num">05</span> Фильтр слов</a>
+        <a class="toc-item" href="#mod-links"><span class="toc-num">06</span> Фильтр ссылок</a>
+        <a class="toc-item" href="#mod-chat"><span class="toc-num">07</span> Управление чатом</a>
+        <a class="toc-item" href="#mgmt-welcome"><span class="toc-num">08</span> Приветствие</a>
+        <a class="toc-item" href="#mgmt-rules"><span class="toc-num">09</span> Правила чата</a>
+        <a class="toc-item" href="#profile-nick"><span class="toc-num">10</span> Профиль участника</a>
+        <a class="toc-item" href="#profile-stats"><span class="toc-num">11</span> Статистика</a>
+        <a class="toc-item" href="#profile-rep"><span class="toc-num">12</span> Репутация</a>
+        <a class="toc-item" href="#module-marriage"><span class="toc-num">13</span> Модуль «Браки»</a>
+        <a class="toc-item" href="#module-rp"><span class="toc-num">14</span> РП-команды</a>
+        <a class="toc-item" href="#games-solo"><span class="toc-num">15</span> Одиночные игры</a>
+        <a class="toc-item" href="#games-pvp"><span class="toc-num">16</span> PvP-игры</a>
+        <a class="toc-item" href="#games-multi"><span class="toc-num">17</span> Групповые игры</a>
+        <a class="toc-item" href="#games-mafia"><span class="toc-num">18</span> Мафия</a>
+        <a class="toc-item" href="#utils"><span class="toc-num">19</span> Утилиты</a>
+        <a class="toc-item" href="#lang"><span class="toc-num">20</span> Язык интерфейса</a>
+      </div>
+    </div>
+
+    <!-- ── Обозначения ── -->
+    <div id="notation" class="notation-box">
+      <h3>📖 Обозначения</h3>
+      <ul>
+        <li><strong>{цель}</strong> — @username, ответ на сообщение или текстовое упоминание участника.</li>
+        <li><strong>{время}</strong> — длительность: <code>30м</code>, <code>2ч</code>, <code>7д</code>, <code>1нед</code>. Если не указано — применяется значение по умолчанию.</li>
+        <li><strong>{текст}</strong> — произвольный текст: причина, никнейм, правила и т.д.</li>
+        <li>Параметры в <strong>[ ]</strong> — необязательные. Параметры в <strong>{ }</strong> — обязательные.</li>
+        <li>Ранги обозначены значками <span class="rank-badge rank-1">1</span> <span class="rank-badge rank-2">2</span> <span class="rank-badge rank-3">3</span> <span class="rank-badge rank-4">4</span> — минимальный ранг для использования команды.</li>
+      </ul>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         01 · СИСТЕМА РАНГОВ
+    ════════════════════════════════════════ -->
+    <section id="ranks" class="section">
+      <div class="section-header">
+        <div class="section-icon blue">🏷</div>
+        <div>
+          <div class="section-num">01</div>
+          <div class="section-title">Система рангов</div>
+        </div>
+      </div>
+
+      <p class="section-desc">AIO-chat использует 6-уровневую систему рангов. Telegram-создатель чата автоматически получает ранг 4. Ранг -1 («бомж») полностью ограничивает доступ к командам бота.</p>
+
+      <table class="rank-table">
+        <thead>
+          <tr>
+            <th>Ранг</th>
+            <th>Название</th>
+            <th>Возможности</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="rank-badge" style="background:rgba(248,113,113,0.12);color:#f87171;border:1px solid rgba(248,113,113,0.2);">-1</span></td>
+            <td>Бомж</td>
+            <td>Нет доступа к командам бота</td>
+          </tr>
+          <tr>
+            <td><span class="rank-badge" style="background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">0</span></td>
+            <td>Обычный участник</td>
+            <td>Базовые пользовательские команды</td>
+          </tr>
+          <tr>
+            <td><span class="rank-badge rank-1">1</span></td>
+            <td>Младший админ</td>
+            <td>Мут, размут, просмотр списков</td>
+          </tr>
+          <tr>
+            <td><span class="rank-badge rank-2">2</span></td>
+            <td>Старший админ</td>
+            <td>+ Варны, ники, правила, закреп, фильтры</td>
+          </tr>
+          <tr>
+            <td><span class="rank-badge rank-3">3</span></td>
+            <td>Зам. владельца</td>
+            <td>+ Рассылка, закрытие чата, повышение до 2 ранга</td>
+          </tr>
+          <tr>
+            <td><span class="rank-badge rank-4">4</span></td>
+            <td>Владелец</td>
+            <td>+ Бан, все настройки, повышение до 4 ранга</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name">!мойранг</div>
+          <div>
+            <div class="cmd-desc">Показывает твой текущий ранг в чате.</div>
+            <div class="cmd-aliases"><span class="alias">rankme</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!ранг {цель} {число}</div>
+          <div>
+            <div class="cmd-desc">Устанавливает ранг участнику от -1 до 4. <span class="rank-badge rank-3">3</span></div>
+            <div class="cmd-aliases"><span class="alias">повысить</span><span class="alias">rank</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!ранг снять {цель}</div>
+          <div>
+            <div class="cmd-desc">Сбрасывает ранг участника до 0. <span class="rank-badge rank-3">3</span></div>
+            <div class="cmd-aliases"><span class="alias">ранг убрать</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!понизить {цель}</div>
+          <div>
+            <div class="cmd-desc">Понижает ранг участника на 1 (минимум до 0). <span class="rank-badge rank-3">3</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!админлист</div>
+          <div>
+            <div class="cmd-desc">Показывает всех участников с ботовым рангом в чате.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         02 · ОСНОВНЫЕ КОМАНДЫ МОДЕРАЦИИ
+    ════════════════════════════════════════ -->
+    <section id="mod-base" class="section">
+      <div class="section-header">
+        <div class="section-icon blue">🛡</div>
+        <div>
+          <div class="section-num">02</div>
+          <div class="section-title">Команды модерации</div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <span class="callout-icon">💡</span>
+        <div>Модерация применяется к участникам с <strong>более низким рангом</strong>, чем у исполнителя. Нельзя наказать участника с равным или более высоким рангом. Telegram-создатель группы неприкосновенен.</div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Мут</div>
+        <div class="cmd-list">
+          <div class="cmd">
+            <div class="cmd-name">!мут {цель} [{время}] [{причина}]</div>
+            <div>
+              <div class="cmd-desc">Запрещает участнику отправлять сообщения. По умолчанию — <strong>30 минут</strong>. <span class="rank-badge rank-1">1</span></div>
+              <div class="cmd-aliases"><span class="alias">mute</span><span class="alias">заткнуть</span></div>
+            </div>
+          </div>
+          <div class="cmd">
+            <div class="cmd-name">!размут {цель}</div>
+            <div>
+              <div class="cmd-desc">Снимает мут с участника досрочно. <span class="rank-badge rank-1">1</span></div>
+              <div class="cmd-aliases"><span class="alias">анмут</span><span class="alias">unmute</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Бан</div>
+        <div class="cmd-list">
+          <div class="cmd">
+            <div class="cmd-name">!бан {цель} [{время}] [{причина}]</div>
+            <div>
+              <div class="cmd-desc">Блокирует участника в чате. По умолчанию — <strong>24 часа</strong>. <span class="rank-badge rank-4">4</span></div>
+              <div class="cmd-aliases"><span class="alias">блок</span><span class="alias">заблокировать</span></div>
+            </div>
+          </div>
+          <div class="cmd">
+            <div class="cmd-name">!разбан {цель}</div>
+            <div>
+              <div class="cmd-desc">Снимает блокировку с участника. <span class="rank-badge rank-4">4</span></div>
+              <div class="cmd-aliases"><span class="alias">анбан</span><span class="alias">unban</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Прочее</div>
+        <div class="cmd-list">
+          <div class="cmd">
+            <div class="cmd-name green">!закреп</div>
+            <div>
+              <div class="cmd-desc">Закрепляет сообщение (используется ответом на нужное сообщение). <span class="rank-badge rank-2">2</span></div>
+              <div class="cmd-aliases"><span class="alias">закрепи</span><span class="alias">закрепить</span><span class="alias">pin</span></div>
+            </div>
+          </div>
+          <div class="cmd">
+            <div class="cmd-name red">!-смс</div>
+            <div>
+              <div class="cmd-desc">Удаляет сообщение (используется ответом на него). <span class="rank-badge rank-1">1</span></div>
+              <div class="cmd-aliases"><span class="alias">-соо</span><span class="alias">-сообщение</span></div>
+            </div>
+          </div>
+          <div class="cmd">
+            <div class="cmd-name">!призыв [{текст}]</div>
+            <div>
+              <div class="cmd-desc">Упоминает всех участников чата (из кэша). Можно добавить сопроводительный текст. <span class="rank-badge rank-1">1</span></div>
+              <div class="cmd-aliases"><span class="alias">зазыв</span><span class="alias">калл</span></div>
+            </div>
+          </div>
+          <div class="cmd">
+            <div class="cmd-name">!призывранг</div>
+            <div>
+              <div class="cmd-desc">Настраивает минимальный ранг для использования команды призыва. <span class="rank-badge rank-3">3</span></div>
+              <div class="cmd-aliases"><span class="alias">зазывранг</span></div>
+            </div>
+          </div>
+          <div class="cmd">
+            <div class="cmd-name">!рассылка {текст}</div>
+            <div>
+              <div class="cmd-desc">Отправляет сообщение во все известные боту чаты. <span class="rank-badge rank-3">3</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         03 · ВАРНЫ И БЛОКИРОВКИ
+    ════════════════════════════════════════ -->
+    <section id="mod-warns" class="section">
+      <div class="section-header">
+        <div class="section-icon yellow">⚠️</div>
+        <div>
+          <div class="section-num">03</div>
+          <div class="section-title">Варны и предупреждения</div>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div>При достижении максимального количества варнов участник автоматически получает бан. По умолчанию лимит — <strong>3 варна</strong>. Снять варн может только тот, чей ранг <strong>выше</strong> ранга выдавшего.</div>
+      </div>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name yellow">!варн {цель} [{время}] [{причина}]</div>
+          <div>
+            <div class="cmd-desc">Выдаёт предупреждение участнику. По умолчанию — <strong>7 дней</strong>. <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-aliases"><span class="alias">предупреждение</span><span class="alias">выговор</span><span class="alias">warn</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!варн максимум {N}</div>
+          <div>
+            <div class="cmd-desc">Устанавливает лимит варнов (1–20). При достижении — автобан. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name green">!-варн {цель}</div>
+          <div>
+            <div class="cmd-desc">Снимает один активный варн. Нельзя снять варн, выданный участником с равным или более высоким рангом. <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-aliases"><span class="alias">снятьварн</span><span class="alias">unwarn</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!мои варны</div>
+          <div>
+            <div class="cmd-desc">Показывает твои активные варны и их причины.</div>
+            <div class="cmd-aliases"><span class="alias">мойварн</span><span class="alias">мойварны</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!варны {цель}</div>
+          <div>
+            <div class="cmd-desc">Показывает варны другого участника. <span class="rank-badge rank-1">1</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!варнлист</div>
+          <div>
+            <div class="cmd-desc">Полный список участников с активными варнами. <span class="rank-badge rank-1">1</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!мутлист</div>
+          <div>
+            <div class="cmd-desc">Список всех заглушённых участников. <span class="rank-badge rank-1">1</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!банлист</div>
+          <div>
+            <div class="cmd-desc">Список всех заблокированных участников. <span class="rank-badge rank-1">1</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         04 · АНТИСПАМ
+    ════════════════════════════════════════ -->
+    <section id="mod-antispam" class="section">
+      <div class="section-header">
+        <div class="section-icon red">🤖</div>
+        <div>
+          <div class="section-num">04</div>
+          <div class="section-title">Антиспам</div>
+        </div>
+      </div>
+
+      <p class="section-desc">Автоматически мутит участников при превышении лимита сообщений за 10 секунд. Работает на участников с рангом 0–2. Ранг 3+ защищён от автомута.</p>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name green">!+антиспам</div>
+          <div>
+            <div class="cmd-desc">Включает антиспам с текущими настройками (по умолчанию: 5 сообщений → мут 30 мин). <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-aliases"><span class="alias">включитьантиспам</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name red">!-антиспам</div>
+          <div>
+            <div class="cmd-desc">Выключает антиспам. <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-aliases"><span class="alias">выключитьантиспам</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!антиспам {N} {время}</div>
+          <div>
+            <div class="cmd-desc">Настраивает лимит сообщений и время мута. Пример: <code>!антиспам 5 30м</code>. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!антиспам</div>
+          <div>
+            <div class="cmd-desc">Показывает текущие настройки антиспама. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         05 · ФИЛЬТР СЛОВ
+    ════════════════════════════════════════ -->
+    <section id="mod-filter" class="section">
+      <div class="section-header">
+        <div class="section-icon red">🚫</div>
+        <div>
+          <div class="section-num">05</div>
+          <div class="section-title">Фильтр слов</div>
+        </div>
+      </div>
+
+      <p class="section-desc">Автоматически обнаруживает запрещённые слова в сообщениях и применяет настроенное действие. Участники с рангом 1+ защищены от фильтра.</p>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name green">!+фильтр {слово1} [{слово2}…]</div>
+          <div>
+            <div class="cmd-desc">Добавляет одно или несколько слов в фильтр. <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-aliases"><span class="alias">добавитьфильтр</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name red">!-фильтр [{слово}]</div>
+          <div>
+            <div class="cmd-desc">Убирает слово из фильтра. Без аргументов — очищает весь список. <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-aliases"><span class="alias">удалитьфильтр</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!фильтр соо</div>
+          <div>
+            <div class="cmd-desc">Действие: только удалить сообщение. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!фильтр мут {время}</div>
+          <div>
+            <div class="cmd-desc">Действие: удалить + мут на указанное время. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!фильтр бан {время}</div>
+          <div>
+            <div class="cmd-desc">Действие: удалить + бан на указанное время. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name yellow">!фильтр мутварн {время}</div>
+          <div>
+            <div class="cmd-desc">Действие: удалить + мут + варн. При достижении лимита варнов — автобан. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!фильтр</div>
+          <div>
+            <div class="cmd-desc">Показывает список запрещённых слов и текущее действие. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         06 · ФИЛЬТР ССЫЛОК
+    ════════════════════════════════════════ -->
+    <section id="mod-links" class="section">
+      <div class="section-header">
+        <div class="section-icon cyan">🔗</div>
+        <div>
+          <div class="section-num">06</div>
+          <div class="section-title">Фильтр ссылок</div>
+        </div>
+      </div>
+
+      <p class="section-desc">Контролирует, какие типы ссылок разрешены в чате. Сообщения с запрещёнными ссылками удаляются автоматически. Участники с рангом 2+ защищены от фильтра.</p>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name green">!+ссылки</div>
+          <div>
+            <div class="cmd-desc">Разрешает все виды ссылок (чаты, сайты, боты). <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name red">!-ссылки</div>
+          <div>
+            <div class="cmd-desc">Запрещает все виды ссылок. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name green">!+чаты</div>
+          <div>
+            <div class="cmd-desc">Разрешает ссылки на приватные Telegram-чаты (<code>t.me/+…</code>, <code>t.me/joinchat/…</code>). <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name red">!-чаты</div>
+          <div>
+            <div class="cmd-desc">Запрещает ссылки на приватные чаты. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name green">!+сайты</div>
+          <div>
+            <div class="cmd-desc">Разрешает ссылки на сторонние сайты. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name red">!-сайты</div>
+          <div>
+            <div class="cmd-desc">Запрещает ссылки на сторонние сайты. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name green">!+боты</div>
+          <div>
+            <div class="cmd-desc">Разрешает приглашение ботов (ссылки вида <code>t.me/botname</code>). <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name red">!-боты</div>
+          <div>
+            <div class="cmd-desc">Запрещает приглашение ботов. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!ссылки</div>
+          <div>
+            <div class="cmd-desc">Показывает текущее состояние всех фильтров ссылок. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         07 · УПРАВЛЕНИЕ ЧАТОМ
+    ════════════════════════════════════════ -->
+    <section id="mod-chat" class="section">
+      <div class="section-header">
+        <div class="section-icon purple">🔒</div>
+        <div>
+          <div class="section-num">07</div>
+          <div class="section-title">Управление чатом</div>
+        </div>
+      </div>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name red">!-чат</div>
+          <div>
+            <div class="cmd-desc">Запрещает <strong>все виды сообщений</strong> от обычных участников (текст, медиа, голосовые и т.д.). Администрация работает в штатном режиме. <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-aliases"><span class="alias">чат</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name green">!+чат</div>
+          <div>
+            <div class="cmd-desc">Открывает чат — все могут снова писать. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         08 · ПРИВЕТСТВИЕ
+    ════════════════════════════════════════ -->
+    <section id="mgmt-welcome" class="section">
+      <div class="section-header">
+        <div class="section-icon green">👋</div>
+        <div>
+          <div class="section-num">08</div>
+          <div class="section-title">Приветствие</div>
+        </div>
+      </div>
+
+      <p class="section-desc">Бот автоматически приветствует новых участников. Можно задать кастомное приветствие (текст, фото, GIF, видео) или использовать встроенные шаблоны AIO-chat.</p>
+
+      <div class="callout success">
+        <span class="callout-icon">✨</span>
+        <div>Используй <code>{name}</code> или <code>{имя}</code> в тексте — бот подставит имя вошедшего участника автоматически.</div>
+      </div>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name green">!+приветствие</div>
+          <div>
+            <div class="cmd-desc">Запускает интерактивную настройку. Бот попросит прислать текст, фото, GIF или видео (с подписью или без). <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name red">!-приветствие</div>
+          <div>
+            <div class="cmd-desc">Удаляет кастомное приветствие. Бот вернётся к стандартным шаблонам. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!приветствие</div>
+          <div>
+            <div class="cmd-desc">Показывает превью текущего приветствия.</div>
+            <div class="cmd-aliases"><span class="alias">welcome</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         09 · ПРАВИЛА И НАСТРОЙКИ
+    ════════════════════════════════════════ -->
+    <section id="mgmt-rules" class="section">
+      <div class="section-header">
+        <div class="section-icon purple">📜</div>
+        <div>
+          <div class="section-num">09</div>
+          <div class="section-title">Правила и настройки чата</div>
+        </div>
+      </div>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name green">!+правила {текст}</div>
+          <div>
+            <div class="cmd-desc">Устанавливает правила чата. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name red">!-правила</div>
+          <div>
+            <div class="cmd-desc">Удаляет правила чата. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!правила</div>
+          <div>
+            <div class="cmd-desc">Показывает правила чата.</div>
+            <div class="cmd-aliases"><span class="alias">нормы</span><span class="alias">законы</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name green">!+автозаявка</div>
+          <div>
+            <div class="cmd-desc">Включает автоматическое одобрение заявок на вступление. <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-aliases"><span class="alias">+автопринятие</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name red">!-автозаявка</div>
+          <div>
+            <div class="cmd-desc">Выключает автоодобрение заявок. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection" style="margin-top:24px;">
+        <div class="subsection-title">Проверка подписки</div>
+        <div class="cmd-list">
+          <div class="cmd">
+            <div class="cmd-name">!проверка @канал [@канал2…]</div>
+            <div>
+              <div class="cmd-desc">Включает обязательную подписку на каналы для участия в чате. <span class="rank-badge rank-3">3</span></div>
+            </div>
+          </div>
+          <div class="cmd">
+            <div class="cmd-name red">!проверкаoff</div>
+            <div>
+              <div class="cmd-desc">Выключает проверку подписки. <span class="rank-badge rank-3">3</span></div>
+              <div class="cmd-aliases"><span class="alias">подпискаoff</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection" style="margin-top:24px;">
+        <div class="subsection-title">Режим «Романтика»</div>
+        <div class="cmd-list">
+          <div class="cmd">
+            <div class="cmd-name purple">/romance</div>
+            <div>
+              <div class="cmd-desc">Показывает и управляет романтическим режимом. Открывает РП-команды с пометкой 🔒 (поцелуй, обнять за руку и т.д.). <span class="rank-badge rank-1">1+</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         10 · ПРОФИЛЬ
+    ════════════════════════════════════════ -->
+    <section id="profile-nick" class="section">
+      <div class="section-header">
+        <div class="section-icon cyan">🏷</div>
+        <div>
+          <div class="section-num">10</div>
+          <div class="section-title">Профиль участника</div>
+        </div>
+      </div>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name green">!+ник {текст}</div>
+          <div>
+            <div class="cmd-desc">Устанавливает себе никнейм в чате (до 32 символов). Заменяет имя Telegram во всех командах бота.</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name red">!-ник</div>
+          <div>
+            <div class="cmd-desc">Удаляет никнейм, возвращает имя из Telegram.</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!+описание {текст}</div>
+          <div>
+            <div class="cmd-desc">Устанавливает описание профиля (отображается в команде «стата»).</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name red">!-описание</div>
+          <div>
+            <div class="cmd-desc">Удаляет описание профиля.</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!описание [{цель}]</div>
+          <div>
+            <div class="cmd-desc">Показывает описание участника (своё или чужое).</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         11 · СТАТИСТИКА
+    ════════════════════════════════════════ -->
+    <section id="profile-stats" class="section">
+      <div class="section-header">
+        <div class="section-icon blue">📊</div>
+        <div>
+          <div class="section-num">11</div>
+          <div class="section-title">Статистика</div>
+        </div>
+      </div>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name">!стата [{цель}]</div>
+          <div>
+            <div class="cmd-desc">Показывает карточку участника: ранг, репутация, активность по дням/неделям/месяцам, описание и награды.</div>
+            <div class="cmd-aliases"><span class="alias">статистика</span><span class="alias">ктоты</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!моястата</div>
+          <div>
+            <div class="cmd-desc">Быстрый просмотр своей карточки.</div>
+            <div class="cmd-aliases"><span class="alias">ктоя</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!всястата</div>
+          <div>
+            <div class="cmd-desc">Общая статистика чата: количество участников, активность, топ-10 самых общительных.</div>
+            <div class="cmd-aliases"><span class="alias">всястатистика</span><span class="alias">статався</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!топ [{период}]</div>
+          <div>
+            <div class="cmd-desc">Топ активных участников за выбранный период. <code>топ</code> без аргумента = топ недели.</div>
+            <div class="cmd-aliases"><span class="alias">топ день</span><span class="alias">топ неделя</span><span class="alias">топ месяц</span><span class="alias">топ все</span><span class="alias">активность</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!/rpstats [{ключ}]</div>
+          <div>
+            <div class="cmd-desc">Топ РП-активности. Без аргумента — общий топ; с ключом — топ по конкретной команде. Пример: <code>/rpstats hug</code></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         12 · РЕПУТАЦИЯ
+    ════════════════════════════════════════ -->
+    <section id="profile-rep" class="section">
+      <div class="section-header">
+        <div class="section-icon yellow">⭐</div>
+        <div>
+          <div class="section-num">12</div>
+          <div class="section-title">Репутация</div>
+        </div>
+      </div>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name">!репутация</div>
+          <div>
+            <div class="cmd-desc">Показывает твою репутацию в чате.</div>
+            <div class="cmd-aliases"><span class="alias">реп</span><span class="alias">мояреп</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!твояреп {цель}</div>
+          <div>
+            <div class="cmd-desc">Показывает репутацию другого участника.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         13 · БРАКИ
+    ════════════════════════════════════════ -->
+    <section id="module-marriage" class="section">
+      <div class="section-header">
+        <div class="section-icon pink">💍</div>
+        <div>
+          <div class="section-num">13</div>
+          <div class="section-title">Модуль «Браки»</div>
+        </div>
+      </div>
+
+      <p class="section-desc">Система виртуальных браков. У каждого участника может быть только один брак в чате. В 2 дня после развода можно восстановить брак. При восстановлении сохраняется история взаимодействий.</p>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name purple">!брак {цель}</div>
+          <div>
+            <div class="cmd-desc">Делает предложение участнику. Требует подтверждения от второй стороны.</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!мой брак</div>
+          <div>
+            <div class="cmd-desc">Показывает информацию о текущем браке: партнёр, дней вместе, годовщина, количество взаимодействий.</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name red">!развод</div>
+          <div>
+            <div class="cmd-desc">Подаёт на развод. Даётся 2 дня на примирение — после этого брак расторгается автоматически.</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!браки</div>
+          <div>
+            <div class="cmd-desc">Список всех активных браков в чате с датами и годовщинами.</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name yellow">!поженить {цель1} {цель2}</div>
+          <div>
+            <div class="cmd-desc">Автоматически женит двух участников без их согласия. Доступно администрации. <span class="rank-badge rank-3">3</span></div>
+            <div class="cmd-aliases"><span class="alias">женить</span><span class="alias">поженим</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!шипперим {цель1} {цель2}</div>
+          <div>
+            <div class="cmd-desc">Показывает совместимость двух участников в процентах (ради шутки).</div>
+            <div class="cmd-aliases"><span class="alias">шип</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         14 · РП-КОМАНДЫ
+    ════════════════════════════════════════ -->
+    <section id="module-rp" class="section">
+      <div class="section-header">
+        <div class="section-icon pink">🎭</div>
+        <div>
+          <div class="section-num">14</div>
+          <div class="section-title">РП-команды</div>
+        </div>
+      </div>
+
+      <p class="section-desc">Ролевые действия между участниками чата. Команды с пометкой 🔒 доступны только при включённом романтическом режиме. Полный список команд: <code>/rpcmd</code></p>
+
+      <div class="callout">
+        <span class="callout-icon">🎭</span>
+        <div>Список РП-команд хранится в файле <code>rp_commands.json</code> и полностью настраивается. Используй синтаксис: <code>!{команда} @цель</code> или ответом на сообщение.</div>
+      </div>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name">/rpcmd</div>
+          <div>
+            <div class="cmd-desc">Показывает полный список всех РП-команд с алиасами.</div>
+            <div class="cmd-aliases"><span class="alias">рп</span><span class="alias">рп команды</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name purple">!обнять {цель}</div>
+          <div><div class="cmd-desc">Пример: обнять участника. Действие берётся из случайного шаблона.</div></div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name purple">!погладить {цель}</div>
+          <div><div class="cmd-desc">Пример: погладить по голове.</div></div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name purple">!приветствовать {цель}</div>
+          <div><div class="cmd-desc">Пример: поприветствовать участника.</div></div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!/rpstats</div>
+          <div>
+            <div class="cmd-desc">Статистика РП-активности: кто, что и сколько раз делал в чате.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ════════════════════════════════════════
+         15 · ОДИНОЧНЫЕ ИГРЫ
+    ════════════════════════════════════════ -->
+    <section id="games-solo" class="section">
+      <div class="section-header">
+        <div class="section-icon orange">🎲</div>
+        <div>
+          <div class="section-num">15</div>
+          <div class="section-title">Одиночные игры</div>
+        </div>
+      </div>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name cyan">!монета</div>
+          <div>
+            <div class="cmd-desc">Подбрасывает монету: орёл, решка или — с шансом 1% — встала на ребро.</div>
+            <div class="cmd-aliases"><span class="alias">орел</span><span class="alias">решка</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name cyan">!рулетка</div>
+          <div>
+            <div class="cmd-desc">Русская рулетка: 1 шанс из 6. Проигрыш можно настроить (бан / кик / мут / ничего).</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!рулетка исход {0|ban|kick|mute}</div>
+          <div>
+            <div class="cmd-desc">Устанавливает последствие проигрыша в рулетке. <span class="rank-badge rank-1">1</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name cyan">!угадай</div>
+          <div>
+            <div class="cmd-desc">Угадай число от 1 до 100 за 10 попыток. Пиши числа прямо в чат — бот подскажет «больше» или «меньше».</div>
+            <div class="cmd-aliases"><span class="alias">угадайчисло</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name cyan">!шар {вопрос}</div>
+          <div>
+            <div class="cmd-desc">Магический шар отвечает на вопросы. Режимы: <code>!шар кто</code>, <code>!шар данет</code>, <code>!шар инфа</code>, <code>!шар</code>.</div>
+            <div class="cmd-aliases"><span class="alias">магическийшар</span><span class="alias">всезнающийшар</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name cyan">!ограбление</div>
+          <div>
+            <div class="cmd-desc">Ограбление банка — напряжённая мини-игра с таймером и нарастающим риском ареста.</div>
+            <div class="cmd-aliases"><span class="alias">ограбить</span><span class="alias">банк</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name cyan">!викторина</div>
+          <div>
+            <div class="cmd-desc">Вопрос с вариантами ответов. Первый угадавший побеждает.</div>
+            <div class="cmd-aliases"><span class="alias">квиз</span><span class="alias">quiz</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name cyan">!реакция</div>
+          <div>
+            <div class="cmd-desc">Кто быстрее нажмёт на кнопку? Время реакции фиксируется в миллисекундах.</div>
+            <div class="cmd-aliases"><span class="alias">быстраяреакция</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name cyan">!анаграмма</div>
+          <div>
+            <div class="cmd-desc">Угадай слово из перемешанных букв. Слова берутся из словаря <code>nouns.json</code>. Таймаут — 90 секунд.</div>
+            <div class="cmd-aliases"><span class="alias">!анаграмма стоп</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name cyan">!внв</div>
+          <div>
+            <div class="cmd-desc">«Верю — не верю»: факты или выдумка? Участники голосуют.</div>
+            <div class="cmd-aliases"><span class="alias">верюневерю</span><span class="alias">верю</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name cyan">!удача</div>
+          <div>
+            <div class="cmd-desc">Испытание удачи — случайный предмет с разными шансами выпадения (от ветки до космоса).</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name cyan">!кнб бот</div>
+          <div>
+            <div class="cmd-desc">Камень–Ножницы–Бумага против бота.</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name cyan">!кн бот</div>
+          <div>
+            <div class="cmd-desc">Крестики-нолики против бота.</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name cyan">!слова бот</div>
+          <div>
+            <div class="cmd-desc">Игра в слова против бота.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         16 · PvP ИГРЫ
+    ════════════════════════════════════════ -->
+    <section id="games-pvp" class="section">
+      <div class="section-header">
+        <div class="section-icon red">⚔️</div>
+        <div>
+          <div class="section-num">16</div>
+          <div class="section-title">PvP-игры (1 на 1)</div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <span class="callout-icon">⚖️</span>
+        <div>У всех PvP-игр есть настраиваемый <strong>исход для проигравшего</strong> (<code>0</code> / <code>ban</code> / <code>kick</code> / <code>mute</code>). Приглашение действует 5 минут — потом истекает.</div>
+      </div>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name red">!дуэль {цель}</div>
+          <div>
+            <div class="cmd-desc">Вызов на дуэль: прицел, выстрел, помеха. Шанс попадания растёт от прицеливания.</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!дуэль исход {0|ban|kick|mute}</div>
+          <div>
+            <div class="cmd-desc">Устанавливает исход для проигравшего в дуэли. <span class="rank-badge rank-1">1</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name red">!кнб {цель}</div>
+          <div>
+            <div class="cmd-desc">Камень–Ножницы–Бумага против участника. Оба делают выбор тайно.</div>
+            <div class="cmd-aliases"><span class="alias">каменьножницыбумага</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name red">!слова {цель}</div>
+          <div>
+            <div class="cmd-desc">Игра в слова: каждое слово — на последнюю букву предыдущего. 10 сек на ход.</div>
+            <div class="cmd-aliases"><span class="alias">слово</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name red">!кн {цель}</div>
+          <div>
+            <div class="cmd-desc">Крестики-нолики против участника.</div>
+            <div class="cmd-aliases"><span class="alias">крестикинолики</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name red">!канат {цель}</div>
+          <div>
+            <div class="cmd-desc">Перетягивание каната: кто нажмёт кнопку чаще за 15 секунд — победит.</div>
+            <div class="cmd-aliases"><span class="alias">перетягивание</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name red">!картошка {цель}</div>
+          <div>
+            <div class="cmd-desc">Горячая картошка: передавай, пока не взорвётся. Таймер случайный (7–15 сек).</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!pvp исход {0|ban|kick|mute}</div>
+          <div>
+            <div class="cmd-desc">Устанавливает исход для проигравшего во всех PvP-играх (КНБ, слова, КН, канат, картошка). <span class="rank-badge rank-1">1</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         17 · ГРУППОВЫЕ ИГРЫ
+    ════════════════════════════════════════ -->
+    <section id="games-multi" class="section">
+      <div class="section-header">
+        <div class="section-icon green">👥</div>
+        <div>
+          <div class="section-num">17</div>
+          <div class="section-title">Групповые игры</div>
+        </div>
+      </div>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name green">!шпион</div>
+          <div>
+            <div class="cmd-desc">«Кто шпион?» — одному участнику достаётся секретная роль шпиона, остальным — общая локация. Задача: вычислить шпиона голосованием.</div>
+            <div class="cmd-aliases"><span class="alias">ктошпион</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name green">!шляпа</div>
+          <div>
+            <div class="cmd-desc">Игра «Шляпа»: один объясняет слово, остальные угадывают. Ведущий меняется по кругу.</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name green">!дополни</div>
+          <div>
+            <div class="cmd-desc">Каждый участник добавляет одно слово к общей фразе. Посмотрим, что получится!</div>
+            <div class="cmd-aliases"><span class="alias">дополнифразу</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name green">!поле</div>
+          <div>
+            <div class="cmd-desc">«Поле чудес» — угадай слово по буквам или целиком. Ходы по очереди.</div>
+            <div class="cmd-aliases"><span class="alias">полечудес</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!напомни {время} {текст}</div>
+          <div>
+            <div class="cmd-desc">Устанавливает напоминание. Бот пришлёт сообщение в чат через указанное время. Пример: <code>!напомни 2ч проверить сервер</code></div>
+            <div class="cmd-aliases"><span class="alias">напоминание</span><span class="alias">remind</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         18 · МАФИЯ
+    ════════════════════════════════════════ -->
+    <section id="games-mafia" class="section">
+      <div class="section-header">
+        <div class="section-icon purple">🕵️</div>
+        <div>
+          <div class="section-num">18</div>
+          <div class="section-title">Мафия</div>
+        </div>
+      </div>
+
+      <p class="section-desc">Классическая ролевая игра «Мафия» с автоматическим ведущим. Роли распределяются через личные сообщения. Минимум 4 участника.</p>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name purple">!мафия</div>
+          <div>
+            <div class="cmd-desc">Запускает набор игроков. Присоединяйтесь кнопкой, начинайте командой старта. Роли: мирные жители, мафия, комиссар.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ════════════════════════════════════════
+         19 · УТИЛИТЫ
+    ════════════════════════════════════════ -->
+    <section id="utils" class="section">
+      <div class="section-header">
+        <div class="section-icon cyan">🛠</div>
+        <div>
+          <div class="section-num">19</div>
+          <div class="section-title">Утилиты</div>
+        </div>
+      </div>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name cyan">!погода {город}</div>
+          <div>
+            <div class="cmd-desc">Прогноз погоды в указанном городе: температура, влажность, ветер, направление ветра и описание состояния.</div>
+            <div class="cmd-aliases"><span class="alias">weather</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name cyan">!калькулятор [{выражение}]</div>
+          <div>
+            <div class="cmd-desc">Математический вычислитель с поддержкой уравнений (<code>x+2=5</code>), функций (<code>sqrt</code>, <code>sin</code>, <code>log</code>) и констант (<code>pi</code>, <code>e</code>). Без аргумента — ждёт ввода следующим сообщением.</div>
+            <div class="cmd-aliases"><span class="alias">задача</span><span class="alias">реши</span><span class="alias">пример</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name cyan">!пс [{текст}]</div>
+          <div>
+            <div class="cmd-desc">Подсчёт слов, символов (с/без пробелов) и предложений в тексте. Без аргумента — ждёт следующего сообщения.</div>
+            <div class="cmd-aliases"><span class="alias">подсчет слов</span><span class="alias">подсчёт слов</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!полезные</div>
+          <div>
+            <div class="cmd-desc">Показывает краткий список полезных команд.</div>
+            <div class="cmd-aliases"><span class="alias">утилиты</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">/help</div>
+          <div>
+            <div class="cmd-desc">Полный список команд бота.</div>
+            <div class="cmd-aliases"><span class="alias">помощь</span><span class="alias">хелп</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">/start</div>
+          <div>
+            <div class="cmd-desc">Приветственное сообщение с кратким описанием бота.</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">/adminstats</div>
+          <div>
+            <div class="cmd-desc">Системная статистика: пользователи, сообщения, чаты, браки, команды. Только для создателя бота.</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">!отзыв [{текст}]</div>
+          <div>
+            <div class="cmd-desc">Отправить отзыв, идею или предложение создателю бота. Можно писать несколько сообщений подряд — завершить: «стоп отзыв».</div>
+            <div class="cmd-aliases"><span class="alias">идея</span><span class="alias">предложение</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ════════════════════════════════════════
+         20 · ЯЗЫК ИНТЕРФЕЙСА
+    ════════════════════════════════════════ -->
+    <section id="lang" class="section">
+      <div class="section-header">
+        <div class="section-icon cyan">🌐</div>
+        <div>
+          <div class="section-num">20</div>
+          <div class="section-title">Язык интерфейса</div>
+        </div>
+      </div>
+
+      <p class="section-desc">AIO-chat поддерживает два языка: <strong>Русский</strong> и <strong>English</strong>. Все сообщения, кнопки, команды и алиасы переключаются вместе с языком. Обе версии команд работают одновременно — <code>!mute</code> и <code>!мут</code> эквивалентны независимо от языка.</p>
+
+      <div class="callout success">
+        <span class="callout-icon">🌐</span>
+        <div><strong>/lang</strong> меняет язык только для тебя лично (в ЛС с ботом). <strong>/langgr</strong> меняет язык для всего чата сразу — все участники увидят ответы бота на выбранном языке.</div>
+      </div>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name cyan">/lang</div>
+          <div>
+            <div class="cmd-desc">Сменить личный язык бота. Работает <strong>только в личных сообщениях</strong> с ботом. После команды появятся кнопки: 🇷🇺 Русский · 🇬🇧 English</div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name cyan">/langgr</div>
+          <div>
+            <div class="cmd-desc">Сменить язык группы. Работает <strong>только в чате</strong>. Меняет язык для всех участников. <span class="rank-badge rank-2">2</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;">
+        <div class="subsection-title">Что переключается вместе с языком</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+          <div class="cmd" style="grid-column:1">
+            <div class="cmd-name green">✅</div>
+            <div class="cmd-desc">Все сообщения бота<br>Кнопки (inline keyboards)<br>Описания команд<br>Ошибки и подсказки<br>Сообщения игр<br>Системные уведомления</div>
+          </div>
+          <div class="cmd" style="grid-column:2">
+            <div class="cmd-name cyan">🔄</div>
+            <div class="cmd-desc">Команды работают <strong>на обоих языках</strong> одновременно:<br><code>!мут</code> = <code>!mute</code><br><code>!бан</code> = <code>!ban</code><br><code>!варн</code> = <code>!warn</code><br><code>!топ</code> = <code>!top</code><br>и т.д.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <div style="margin-top:80px;padding-top:32px;border-top:1px solid var(--border);">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;">
+        <div>
+          <div style="font-size:22px;margin-bottom:6px;">⚡ <strong>AIO-chat</strong></div>
+          <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">All In One Chat Manager<br>Универсальный чат-менеджер для Telegram</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;text-align:right;">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);font-family:var(--mono);margin-bottom:8px;">Автор проекта</div>
+          <div style="font-size:16px;font-weight:800;margin-bottom:4px;">Iron Tolstyak 1998</div>
+          <a href="https://t.me/Iron_Tolstyak_1998" target="_blank" style="font-family:var(--mono);font-size:12px;color:var(--accent);text-decoration:none;">@Iron_Tolstyak_1998 →</a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>
