@@ -395,6 +395,8 @@
   .rank-2 { background: rgba(93,124,245,0.12); color: var(--accent); border: 1px solid rgba(93,124,245,0.2); }
   .rank-3 { background: rgba(167,139,250,0.12); color: var(--accent2); border: 1px solid rgba(167,139,250,0.2); }
   .rank-4 { background: rgba(251,191,36,0.12); color: var(--warn); border: 1px solid rgba(251,191,36,0.2); }
+  .rank-5 { background: rgba(244,114,182,0.12); color: #f472b6; border: 1px solid rgba(244,114,182,0.2); }
+  .rank-6 { background: rgba(56,189,248,0.12); color: var(--accent3); border: 1px solid rgba(56,189,248,0.2); }
 
   /* ── Callout ── */
   .callout {
@@ -611,6 +613,7 @@
     <div class="nav-section-label">Модерация</div>
     <a class="nav-link" href="#mod-base"><span class="nav-icon">🛡</span> Основные команды</a>
     <a class="nav-link" href="#mod-warns"><span class="nav-icon">⚠️</span> Варны и блокировки</a>
+    <a class="nav-link" href="#mod-joke"><span class="nav-icon">🎭</span> Шуточная модерация</a>
     <a class="nav-link" href="#mod-antispam"><span class="nav-icon">🤖</span> Антиспам</a>
     <a class="nav-link" href="#mod-filter"><span class="nav-icon">🚫</span> Фильтр слов</a>
     <a class="nav-link" href="#mod-links"><span class="nav-icon">🔗</span> Фильтр ссылок</a>
@@ -633,6 +636,7 @@
     <a class="nav-link" href="#games-solo"><span class="nav-icon">🎲</span> Одиночные</a>
     <a class="nav-link" href="#games-pvp"><span class="nav-icon">⚔️</span> PvP</a>
     <a class="nav-link" href="#games-multi"><span class="nav-icon">👥</span> Групповые</a>
+    <a class="nav-link" href="#games-easter"><span class="nav-icon">🥚</span> Пасхальные</a>
     <a class="nav-link" href="#games-mafia"><span class="nav-icon">🕵️</span> Мафия</a>
 
     <div class="nav-section-label">Утилиты</div>
@@ -645,7 +649,7 @@
 
     <!-- Hero -->
     <div class="hero">
-      <div class="hero-badge">⚡ v3.0 · All In One Chat Manager</div>
+      <div class="hero-badge">⚡ All In One Chat Manager</div>
       <h1>Команды<br>AIO-chat</h1>
       <p class="hero-sub">Полный справочник по командам, модулям и мини-играм универсального чат-менеджера. Всё в одном месте.</p>
       <div class="meta-row">
@@ -664,6 +668,7 @@
         <a class="toc-item" href="#ranks"><span class="toc-num">01</span> Система рангов</a>
         <a class="toc-item" href="#mod-base"><span class="toc-num">02</span> Команды модерации</a>
         <a class="toc-item" href="#mod-warns"><span class="toc-num">03</span> Варны и блокировки</a>
+        <a class="toc-item" href="#mod-joke"><span class="toc-num">03b</span> Шуточная модерация</a>
         <a class="toc-item" href="#mod-antispam"><span class="toc-num">04</span> Антиспам</a>
         <a class="toc-item" href="#mod-filter"><span class="toc-num">05</span> Фильтр слов</a>
         <a class="toc-item" href="#mod-links"><span class="toc-num">06</span> Фильтр ссылок</a>
@@ -678,6 +683,7 @@
         <a class="toc-item" href="#games-solo"><span class="toc-num">15</span> Одиночные игры</a>
         <a class="toc-item" href="#games-pvp"><span class="toc-num">16</span> PvP-игры</a>
         <a class="toc-item" href="#games-multi"><span class="toc-num">17</span> Групповые игры</a>
+        <a class="toc-item" href="#games-easter"><span class="toc-num">17b</span> Пасхальные игры</a>
         <a class="toc-item" href="#games-mafia"><span class="toc-num">18</span> Мафия</a>
         <a class="toc-item" href="#utils"><span class="toc-num">19</span> Утилиты</a>
         <a class="toc-item" href="#lang"><span class="toc-num">20</span> Язык интерфейса</a>
@@ -692,7 +698,7 @@
         <li><strong>{время}</strong> — длительность: <code>30м</code>, <code>2ч</code>, <code>7д</code>, <code>1нед</code>. Если не указано — применяется значение по умолчанию.</li>
         <li><strong>{текст}</strong> — произвольный текст: причина, никнейм, правила и т.д.</li>
         <li>Параметры в <strong>[ ]</strong> — необязательные. Параметры в <strong>{ }</strong> — обязательные.</li>
-        <li>Ранги обозначены значками <span class="rank-badge rank-1">1</span> <span class="rank-badge rank-2">2</span> <span class="rank-badge rank-3">3</span> <span class="rank-badge rank-4">4</span> — минимальный ранг для использования команды.</li>
+        <li>Ранги обозначены значками <span class="rank-badge rank-1">1</span> <span class="rank-badge rank-2">2</span> <span class="rank-badge rank-3">3</span> <span class="rank-badge rank-4">4</span> <span class="rank-badge rank-5">5</span> <span class="rank-badge rank-6">6</span> — минимальный ранг для использования команды.</li>
       </ul>
     </div>
 
@@ -708,49 +714,64 @@
         </div>
       </div>
 
-      <p class="section-desc">AIO-chat использует 6-уровневую систему рангов. Telegram-создатель чата автоматически получает ранг 4. Ранг -1 («бомж») полностью ограничивает доступ к командам бота.</p>
+      <p class="section-desc">AIO-chat использует систему из 8 ступеней: от -1 до 6. Telegram-создатель чата автоматически получает ранг 6. Ранг -1 («бомж») полностью ограничивает доступ к командам бота и удаляет медиа.</p>
 
       <table class="rank-table">
         <thead>
           <tr>
             <th>Ранг</th>
             <th>Название</th>
-            <th>Возможности</th>
+            <th>Права</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td><span class="rank-badge" style="background:rgba(248,113,113,0.12);color:#f87171;border:1px solid rgba(248,113,113,0.2);">-1</span></td>
             <td>Бомж</td>
-            <td>Нет доступа к командам бота</td>
+            <td>Нет команд, медиа удаляются</td>
           </tr>
           <tr>
             <td><span class="rank-badge" style="background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">0</span></td>
-            <td>Обычный участник</td>
-            <td>Базовые пользовательские команды</td>
+            <td>Обычный пользователь</td>
+            <td>Базовые игры</td>
           </tr>
           <tr>
             <td><span class="rank-badge rank-1">1</span></td>
-            <td>Младший админ</td>
-            <td>Мут, размут, просмотр списков</td>
+            <td>Младший модератор</td>
+            <td>Мут / размут, романтика вкл / выкл, закреп</td>
           </tr>
           <tr>
             <td><span class="rank-badge rank-2">2</span></td>
-            <td>Старший админ</td>
-            <td>+ Варны, ники, правила, закреп, фильтры</td>
+            <td>Старший модератор</td>
+            <td>+ исход дуэли / рулетки, антиспам, фильтр, ссылки</td>
           </tr>
           <tr>
             <td><span class="rank-badge rank-3">3</span></td>
-            <td>Зам. владельца</td>
-            <td>+ Рассылка, закрытие чата, повышение до 2 ранга</td>
+            <td>Младший админ</td>
+            <td>+ бан / разбан, варн / снятие варна, призыв ранга, приветствие / правила / чат</td>
           </tr>
           <tr>
             <td><span class="rank-badge rank-4">4</span></td>
+            <td>Старший админ</td>
+            <td>+ выдача рангов (до 3)</td>
+          </tr>
+          <tr>
+            <td><span class="rank-badge rank-5">5</span></td>
+            <td>Зам. владельца</td>
+            <td>+ выдача рангов (до 4), поженить</td>
+          </tr>
+          <tr>
+            <td><span class="rank-badge rank-6">6</span></td>
             <td>Владелец</td>
-            <td>+ Бан, все настройки, повышение до 4 ранга</td>
+            <td>Всё, включая выдачу ранга 6</td>
           </tr>
         </tbody>
       </table>
+
+      <div class="callout" style="margin-top:18px;">
+        <span class="callout-icon">🔑</span>
+        <div>Отдельные команды, такие как <code>!рассылка</code>, не зависят от ранга чата. Они доступны только создателю бота и отмечаются отдельно.</div>
+      </div>
 
       <div class="cmd-list">
         <div class="cmd">
@@ -763,27 +784,27 @@
         <div class="cmd">
           <div class="cmd-name">!ранг {цель} {число}</div>
           <div>
-            <div class="cmd-desc">Устанавливает ранг участнику от -1 до 4. <span class="rank-badge rank-3">3</span></div>
+            <div class="cmd-desc">Устанавливает ранг участнику от -1 до 6. <span class="rank-badge rank-4">4</span></div>
             <div class="cmd-aliases"><span class="alias">повысить</span><span class="alias">rank</span></div>
           </div>
         </div>
         <div class="cmd">
           <div class="cmd-name">!ранг снять {цель}</div>
           <div>
-            <div class="cmd-desc">Сбрасывает ранг участника до 0. <span class="rank-badge rank-3">3</span></div>
+            <div class="cmd-desc">Сбрасывает ранг участника до 0. <span class="rank-badge rank-4">4</span></div>
             <div class="cmd-aliases"><span class="alias">ранг убрать</span></div>
           </div>
         </div>
         <div class="cmd">
           <div class="cmd-name">!понизить {цель}</div>
           <div>
-            <div class="cmd-desc">Понижает ранг участника на 1 (минимум до 0). <span class="rank-badge rank-3">3</span></div>
+            <div class="cmd-desc">Понижает ранг участника на 1 (минимум до 0). <span class="rank-badge rank-4">4</span></div>
           </div>
         </div>
         <div class="cmd">
           <div class="cmd-name">!админлист</div>
           <div>
-            <div class="cmd-desc">Показывает всех участников с ботовым рангом в чате.</div>
+            <div class="cmd-desc">Показывает всех участников с бот-рангом в чате.</div>
           </div>
         </div>
       </div>
@@ -832,14 +853,14 @@
           <div class="cmd">
             <div class="cmd-name">!бан {цель} [{время}] [{причина}]</div>
             <div>
-              <div class="cmd-desc">Блокирует участника в чате. По умолчанию — <strong>24 часа</strong>. <span class="rank-badge rank-4">4</span></div>
+              <div class="cmd-desc">Блокирует участника в чате. По умолчанию — <strong>24 часа</strong>. <span class="rank-badge rank-3">3</span></div>
               <div class="cmd-aliases"><span class="alias">блок</span><span class="alias">заблокировать</span></div>
             </div>
           </div>
           <div class="cmd">
             <div class="cmd-name">!разбан {цель}</div>
             <div>
-              <div class="cmd-desc">Снимает блокировку с участника. <span class="rank-badge rank-4">4</span></div>
+              <div class="cmd-desc">Снимает блокировку с участника. <span class="rank-badge rank-3">3</span></div>
               <div class="cmd-aliases"><span class="alias">анбан</span><span class="alias">unban</span></div>
             </div>
           </div>
@@ -852,7 +873,7 @@
           <div class="cmd">
             <div class="cmd-name green">!закреп</div>
             <div>
-              <div class="cmd-desc">Закрепляет сообщение (используется ответом на нужное сообщение). <span class="rank-badge rank-2">2</span></div>
+              <div class="cmd-desc">Закрепляет сообщение (используется ответом на нужное сообщение). <span class="rank-badge rank-1">1</span></div>
               <div class="cmd-aliases"><span class="alias">закрепи</span><span class="alias">закрепить</span><span class="alias">pin</span></div>
             </div>
           </div>
@@ -880,7 +901,7 @@
           <div class="cmd">
             <div class="cmd-name">!рассылка {текст}</div>
             <div>
-              <div class="cmd-desc">Отправляет сообщение во все известные боту чаты. <span class="rank-badge rank-3">3</span></div>
+              <div class="cmd-desc">Отправляет сообщение во все известные боту чаты. Доступно только создателю бота.</div>
             </div>
           </div>
         </div>
@@ -908,20 +929,20 @@
         <div class="cmd">
           <div class="cmd-name yellow">!варн {цель} [{время}] [{причина}]</div>
           <div>
-            <div class="cmd-desc">Выдаёт предупреждение участнику. По умолчанию — <strong>7 дней</strong>. <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-desc">Выдаёт предупреждение участнику. По умолчанию — <strong>7 дней</strong>. <span class="rank-badge rank-3">3</span></div>
             <div class="cmd-aliases"><span class="alias">предупреждение</span><span class="alias">выговор</span><span class="alias">warn</span></div>
           </div>
         </div>
         <div class="cmd">
           <div class="cmd-name">!варн максимум {N}</div>
           <div>
-            <div class="cmd-desc">Устанавливает лимит варнов (1–20). При достижении — автобан. <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-desc">Устанавливает лимит варнов (1–20). При достижении — автобан. <span class="rank-badge rank-3">3</span></div>
           </div>
         </div>
         <div class="cmd">
           <div class="cmd-name green">!-варн {цель}</div>
           <div>
-            <div class="cmd-desc">Снимает один активный варн. Нельзя снять варн, выданный участником с равным или более высоким рангом. <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-desc">Снимает один активный варн. Нельзя снять варн, выданный участником с равным или более высоким рангом. <span class="rank-badge rank-3">3</span></div>
             <div class="cmd-aliases"><span class="alias">снятьварн</span><span class="alias">unwarn</span></div>
           </div>
         </div>
@@ -962,6 +983,50 @@
     <!-- ════════════════════════════════════════
          04 · АНТИСПАМ
     ════════════════════════════════════════ -->
+    <!-- ════════════════════════════════════════
+         03b · ШУТОЧНАЯ МОДЕРАЦИЯ
+    ════════════════════════════════════════ -->
+    <section id="mod-joke" class="section">
+      <div class="section-header">
+        <div class="section-icon purple">🎭</div>
+        <div>
+          <div class="section-num">03b</div>
+          <div class="section-title">Шуточная модерация</div>
+        </div>
+      </div>
+
+      <p class="section-desc">«Пьяные» команды модерации для шуток и разрядки чата. Они выглядят как настоящая модерация, но работают в шуточном режиме и не применяют реальные наказания.</p>
+
+      <div class="callout">
+        <span class="callout-icon">🍻</span>
+        <div>Все команды ниже только имитируют действия модерации. Можно использовать их, чтобы весело «наказать» друга без реального мута, бана или варна.</div>
+      </div>
+
+      <div class="cmd-list">
+        <div class="cmd">
+          <div class="cmd-name">бон {цель} [{время}] [{причина}]</div>
+          <div>
+            <div class="cmd-desc">Шуточный бан. Пишет в чат сообщение в стиле «пьяного» модератора, но никого реально не блокирует.</div>
+            <div class="cmd-aliases"><span class="alias">забонить</span><span class="alias">бонк</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">муь {цель} [{время}] [{причина}]</div>
+          <div>
+            <div class="cmd-desc">Шуточный мут. Имитирует заглушение участника, но не меняет права в чате.</div>
+            <div class="cmd-aliases"><span class="alias">замуть</span><span class="alias">муй</span></div>
+          </div>
+        </div>
+        <div class="cmd">
+          <div class="cmd-name">ворн {цель} [{время}] [{причина}]</div>
+          <div>
+            <div class="cmd-desc">Шуточный варн. Добавляет «весёлое предупреждение» в стиле шутки, без реального счётчика наказаний.</div>
+            <div class="cmd-aliases"><span class="alias">виговор</span><span class="alias">warn</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="mod-antispam" class="section">
       <div class="section-header">
         <div class="section-icon red">🤖</div>
@@ -1153,14 +1218,14 @@
         <div class="cmd">
           <div class="cmd-name red">!-чат</div>
           <div>
-            <div class="cmd-desc">Запрещает <strong>все виды сообщений</strong> от обычных участников (текст, медиа, голосовые и т.д.). Администрация работает в штатном режиме. <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-desc">Запрещает <strong>все виды сообщений</strong> от обычных участников (текст, медиа, голосовые и т.д.). Администрация работает в штатном режиме. <span class="rank-badge rank-3">3</span></div>
             <div class="cmd-aliases"><span class="alias">чат</span></div>
           </div>
         </div>
         <div class="cmd">
           <div class="cmd-name green">!+чат</div>
           <div>
-            <div class="cmd-desc">Открывает чат — все могут снова писать. <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-desc">Открывает чат — все могут снова писать. <span class="rank-badge rank-3">3</span></div>
           </div>
         </div>
       </div>
@@ -1189,13 +1254,13 @@
         <div class="cmd">
           <div class="cmd-name green">!+приветствие</div>
           <div>
-            <div class="cmd-desc">Запускает интерактивную настройку. Бот попросит прислать текст, фото, GIF или видео (с подписью или без). <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-desc">Запускает интерактивную настройку. Бот попросит прислать текст, фото, GIF или видео (с подписью или без). <span class="rank-badge rank-3">3</span></div>
           </div>
         </div>
         <div class="cmd">
           <div class="cmd-name red">!-приветствие</div>
           <div>
-            <div class="cmd-desc">Удаляет кастомное приветствие. Бот вернётся к стандартным шаблонам. <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-desc">Удаляет кастомное приветствие. Бот вернётся к стандартным шаблонам. <span class="rank-badge rank-3">3</span></div>
           </div>
         </div>
         <div class="cmd">
@@ -1224,13 +1289,13 @@
         <div class="cmd">
           <div class="cmd-name green">!+правила {текст}</div>
           <div>
-            <div class="cmd-desc">Устанавливает правила чата. <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-desc">Устанавливает правила чата. <span class="rank-badge rank-3">3</span></div>
           </div>
         </div>
         <div class="cmd">
           <div class="cmd-name red">!-правила</div>
           <div>
-            <div class="cmd-desc">Удаляет правила чата. <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-desc">Удаляет правила чата. <span class="rank-badge rank-3">3</span></div>
           </div>
         </div>
         <div class="cmd">
@@ -1243,14 +1308,14 @@
         <div class="cmd">
           <div class="cmd-name green">!+автозаявка</div>
           <div>
-            <div class="cmd-desc">Включает автоматическое одобрение заявок на вступление. <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-desc">Включает автоматическое одобрение заявок на вступление. <span class="rank-badge rank-3">3</span></div>
             <div class="cmd-aliases"><span class="alias">+автопринятие</span></div>
           </div>
         </div>
         <div class="cmd">
           <div class="cmd-name red">!-автозаявка</div>
           <div>
-            <div class="cmd-desc">Выключает автоодобрение заявок. <span class="rank-badge rank-2">2</span></div>
+            <div class="cmd-desc">Выключает автоодобрение заявок. <span class="rank-badge rank-3">3</span></div>
           </div>
         </div>
       </div>
@@ -1454,7 +1519,7 @@
         <div class="cmd">
           <div class="cmd-name yellow">!поженить {цель1} {цель2}</div>
           <div>
-            <div class="cmd-desc">Автоматически женит двух участников без их согласия. Доступно администрации. <span class="rank-badge rank-3">3</span></div>
+            <div class="cmd-desc">Автоматически женит двух участников без их согласия. Доступно администрации. <span class="rank-badge rank-5">5</span></div>
             <div class="cmd-aliases"><span class="alias">женить</span><span class="alias">поженим</span></div>
           </div>
         </div>
@@ -1484,7 +1549,7 @@
 
       <div class="callout">
         <span class="callout-icon">🎭</span>
-        <div>Список РП-команд хранится в файле <code>rp_commands.json</code> и полностью настраивается. Используй синтаксис: <code>!{команда} @цель</code> или ответом на сообщение.</div>
+        <div>Используй синтаксис: <code>!{команда} @цель</code> или ответом на сообщение.</div>
       </div>
 
       <div class="cmd-list">
@@ -1653,7 +1718,7 @@
         <div class="cmd">
           <div class="cmd-name">!дуэль исход {0|ban|kick|mute}</div>
           <div>
-            <div class="cmd-desc">Устанавливает исход для проигравшего в дуэли. <span class="rank-badge rank-1">1</span></div>
+            <div class="cmd-desc">Устанавливает исход для проигравшего в дуэли. <span class="rank-badge rank-2">2</span></div>
           </div>
         </div>
         <div class="cmd">
@@ -1693,7 +1758,7 @@
         <div class="cmd">
           <div class="cmd-name">!pvp исход {0|ban|kick|mute}</div>
           <div>
-            <div class="cmd-desc">Устанавливает исход для проигравшего во всех PvP-играх (КНБ, слова, КН, канат, картошка). <span class="rank-badge rank-1">1</span></div>
+            <div class="cmd-desc">Устанавливает исход для проигравшего во всех PvP-играх (КНБ, слова, КН, канат, картошка). <span class="rank-badge rank-2">2</span></div>
           </div>
         </div>
       </div>
@@ -1744,6 +1809,51 @@
           <div>
             <div class="cmd-desc">Устанавливает напоминание. Бот пришлёт сообщение в чат через указанное время. Пример: <code>!напомни 2ч проверить сервер</code></div>
             <div class="cmd-aliases"><span class="alias">напоминание</span><span class="alias">remind</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════
+         17b · ПАСХАЛЬНЫЕ ИГРЫ
+    ════════════════════════════════════════ -->
+    <section id="games-easter" class="section">
+      <div class="section-header">
+        <div class="section-icon yellow">🥚</div>
+        <div>
+          <div class="section-num">17b</div>
+          <div class="section-title">Пасхальные игры</div>
+        </div>
+      </div>
+
+      <div class="callout success">
+        <span class="callout-icon">🐣</span>
+        <div>Две PvP-игры в честь Пасхи: одна про битие яиц, вторая — про шарование и корзины. Обе работают через инлайн-кнопки и создают отдельную игру на чат.</div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Битьё яиц</div>
+        <div class="cmd-list">
+          <div class="cmd">
+            <div class="cmd-name yellow">!яйца</div>
+            <div>
+              <div class="cmd-desc">Запускает PvP-дуэль на яйцах. У каждого игрока по 100 прочности. Команды в игре: <strong>Бить</strong>, <strong>Крестится</strong>, <strong>Сбить крест</strong>.</div>
+              <div class="cmd-aliases"><span class="alias">!бя</span><span class="alias">!битье</span><span class="alias">!яйки</span><span class="alias">!eggfight</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Шарование шаров</div>
+        <div class="cmd-list">
+          <div class="cmd">
+            <div class="cmd-name yellow">!шарование</div>
+            <div>
+              <div class="cmd-desc">PvP-игра с 3 жизнями и корзиной на 15 очков. Кнопки: <strong>Взять в корзину</strong>, <strong>Битье</strong>. Цель — первым набрать 15 очков или выжить.</div>
+              <div class="cmd-aliases"><span class="alias">!шары</span><span class="alias">!шар</span><span class="alias">!eggbasket</span></div>
+            </div>
           </div>
         </div>
       </div>
